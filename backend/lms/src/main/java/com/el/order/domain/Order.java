@@ -137,7 +137,7 @@ public class Order extends AbstractAggregateRoot<Order> {
         if (orderType == OrderType.PURCHASE) {
             registerEvent(new OrderPaidEvent(id, items.stream().map(OrderItem::getCourse).toList(), createdBy));
         } else {
-            registerEvent(new OrderExchangePaidEvent(id, exchangeDetails));
+            registerEvent(new OrderExchangePaidEvent(id, exchangeDetails, createdBy));
         }
     }
 
@@ -156,7 +156,7 @@ public class Order extends AbstractAggregateRoot<Order> {
     }
 
     public record OrderPaidEvent(UUID id, List<Long> items, String createdBy) {}
-    public record OrderExchangePaidEvent(UUID id, ExchangeDetails exchangeDetails) {}
+    public record OrderExchangePaidEvent(UUID id, ExchangeDetails exchangeDetails, String createdBy) {}
     public record OrderCancelledEvent(UUID orderId) {}
 
 }
