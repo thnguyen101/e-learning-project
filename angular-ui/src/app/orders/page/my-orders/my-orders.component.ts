@@ -1,9 +1,9 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {OrdersService} from "../../service/orders.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink} from "@angular/router";
-import {Order, OrderItem} from "../../model/order";
+import {Order, OrderType} from "../../model/order";
 import {PaginationUtils} from "../../../common/dto/page-wrapper";
-import {forkJoin, map, of, Subscription} from "rxjs";
+import {forkJoin, map, Observable, of, Subscription, switchMap} from "rxjs";
 import {ErrorHandler} from "../../../common/error-handler.injectable";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {BrowseCourseService} from "../../../browse-course/service/browse-course.service";
@@ -59,36 +59,62 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
 
   loadData(pageNumber: number): void {
     this.orderService.getAllOrders(pageNumber)
+      .pipe(switchMap(pageWrapper => {
+        this.paginationUtils = new PaginationUtils(pageWrapper.page);
+        const orders = pageWrapper.content as Order[];
+        return this.loadOrdersWithCourseDetails(orders);
+      }))
       .subscribe({
-        next: (pageWrapper) => {
-          this.paginationUtils = new PaginationUtils(pageWrapper.page);
-          const orders = pageWrapper.content as Order[];
-          forkJoin(
-            orders.map(order =>
-              order.items.length > 0
-                ? forkJoin(order.items.map(item =>
-                  this.browseCourseService.getPublishedCourse(item.course)
-                    .pipe(map(course => ({...item, courseDetail: course})))
-                )).pipe(map(itemsWithDetails => ({ ...order, items: itemsWithDetails })))
-                : of({ ...order, items: [] })
-            )
-          ).subscribe({
-            next: (ordersWithDetails) => {
-              this.orders = ordersWithDetails;
-            },
-            error: (error) => this.errorHandler.handleServerError(error.error)
-          })
+        next: (ordersWithDetails) => {
+          this.orders = ordersWithDetails;
         },
-        error: (error) => this.errorHandler.handleServerError(error.error)
-      });
+        error: (error) => {
+          this.errorHandler.handleServerError(error.error);
+        }
+      })
   }
 
-  getCourseIdAndTitle(items: OrderItem[]): { id: number, title: string } | null {
-    if (items.length > 0) {
-      return {
-        id: items[0].courseDetail.id,
-        title: items[0].courseDetail.title
-      };
+  private loadOrdersWithCourseDetails(orders: Order[]): Observable<Order[]> {
+    // iterate over each order
+    const orderObservables = orders.map(order => {
+      return order.orderType === OrderType.PURCHASE
+        ? this.loadOrderItemsWithDetails(order)
+        : this.loadExchangeDetails(order)
+    })
+    return forkJoin(orderObservables);
+  }
+
+  private loadOrderItemsWithDetails(order: Order): Observable<Order> {
+    const itemObservables = order.items.map(item => {
+      return this.browseCourseService.getPublishedCourse(item.course)
+        .pipe(map(course => ({...item, courseDetail: course})))
+    });
+    return forkJoin(itemObservables).pipe(map(itemsWithDetails => ({...order, items: itemsWithDetails})))
+  }
+
+  private loadExchangeDetails(order: Order) {
+    if (order.exchangeDetails?.courseId) {
+      return this.browseCourseService.getPublishedCourse(order.exchangeDetails.courseId)
+        .pipe(map(course => ({
+          ...order,
+          exchangeDetails: {
+            ...order.exchangeDetails,
+            courseDetail: course
+          }
+        })))
+    }
+    return of(order);
+  }
+
+  getCourseIdAndTitle(order: Order): { id: number, title: string } | null {
+    if (order.orderType === OrderType.PURCHASE && order.items.length > 0) {
+      const { id, title } = order.items[0].courseDetail;
+      return { id, title };
+    }
+
+    if (order.orderType === OrderType.EXCHANGE && order.exchangeDetails?.courseId) {
+      const { courseDetail: { title, id } } = order.exchangeDetails;
+      return { id, title };
     }
     return null;
   }

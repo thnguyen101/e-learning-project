@@ -3,7 +3,8 @@ import {CourseWithoutSections} from "../../browse-course/model/course-without-se
 export interface ExchangeDetails {
   enrollmentId?: number,
   courseId?: number,
-  additionalPrice?: string
+  additionalPrice?: string,
+  courseDetail: CourseWithoutSections
 }
 
 export enum OrderType {

@@ -29,7 +29,7 @@
             <td>{{ shortUUID(order.id) }}</td>
             <td>{{ order.orderDate | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
             <td>
-              <ng-container *ngIf="getCourseIdAndTitle(order.items) as map">
+              <ng-container *ngIf="getCourseIdAndTitle(order) as map">
                 <a [routerLink]="['/courses', map.id]">{{ map.title }}</a>
               </ng-container>
             </td>
