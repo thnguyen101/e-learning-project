@@ -48,24 +48,15 @@ src
 - Java 17 (You can use [SDKMAN](https://sdkman.io/) to install it)
 - Docker, Docker Compose (You can use [Docker](https://docs.docker.com/get-docker/) to install it)
 
-### Check out sources
+### 1. Run this command
 ```bash
-git clone https://github.com/thainguyencoffee/e-learning-project.git
-cd e-learning-project
+curl -sSL https://raw.githubusercontent.com/thnguyen101/e-learning-project/main/install.sh | bash
 ```
 
-### Compile and test; build all JARs, build image container, start docker compose
+### 2. Open your browser and go to 
+> http://**{hostname}**:7080/angular-ui/ 
 
-1. Without angular (recommend when you want to develop frontend)
+The host is your computer's hostname. You can get it by running this command in linux
 ```bash
-./build.sh without-angular
-```
-2. With angular (recommend when you want to deploy)
-```bash
-./build.sh
-```
-
-3. If you want to build image
-```bash
-./build.sh native
+hostname
 ```
