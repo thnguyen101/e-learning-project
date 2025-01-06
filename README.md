@@ -44,9 +44,9 @@ src
 
 ## How to build
 ### Prerequisites
-[Git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git) and the [JDK17 build](https://www.oracle.com/java/technologies/downloads/#java17).
-
-Be sure that your JAVA_HOME environment variable points to the jdk-17 folder extracted from the JDK download.
+- Git (You can use [Git](https://git-scm.com/) to install it)
+- Java 17 (You can use [SDKMAN](https://sdkman.io/) to install it)
+- Docker, Docker Compose (You can use [Docker](https://docs.docker.com/get-docker/) to install it)
 
 ### Check out sources
 ```bash

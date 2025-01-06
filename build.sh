@@ -130,4 +130,5 @@ if $WITHOUT_ANGULAR; then
   cd angular-ui/
   npm i
   ng serve --host 0.0.0.0 --port 4200
+  xdg-open "http://${host}:7080/angular-ui/"
 fi

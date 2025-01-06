@@ -24,13 +24,6 @@ public interface OrderRepository extends CrudRepository<Order, UUID> {
 
     Optional<Order> findByCreatedByAndId(String createdBy, UUID id);
 
-    @Query("""
-        SELECT 
-            o.*
-        FROM
-            orders o
-        JOIN order_items oi ON o.id = oi.orders
-        WHERE oi.course = :courseId AND o.status = 'PENDING'
-    """)
-    List<Order> findAllOrderPendingByCourseId(Long courseId);
+    List<Order> findAllByStatusAndCreatedBy(Status status, String createdBy);
+
 }

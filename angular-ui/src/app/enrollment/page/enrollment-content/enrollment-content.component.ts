@@ -104,7 +104,6 @@ export class EnrollmentContentComponent implements OnInit {
   isTheBestSeller(coursePath: CoursePathPublishedDto, courseOrder: CourseOrderPublishedDto) {
     const bestSeller = coursePath.courseOrders.reduce((prev, current) =>
       prev.orderIndex > current.orderIndex ? prev : current);
-    console.log(bestSeller)
     return bestSeller.id === courseOrder.id;
   }
 

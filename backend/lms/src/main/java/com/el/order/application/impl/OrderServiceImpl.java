@@ -13,6 +13,7 @@ import com.el.order.web.dto.OrderRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.money.MonetaryAmount;
 import java.util.*;
@@ -62,6 +63,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void paymentSucceeded(UUID orderId) {
+        log.info("OrderService.paymentSucceeded: {}", orderId);
+
         Order order = findOrderById(orderId);
         order.makePaid();
         if (order.getDiscountCode() != null && !order.getDiscountCode().isBlank()) {
@@ -70,22 +73,46 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
-    public void makeCancelledAllOrderByCourseId(UUID orderId) {
-        log.info("Cancelling all orders by id: {}", orderId);
 
-        // now only support order contain only one course
+    @Override
+    @Transactional
+    public void makeCancellingAllOrderAfterPaidForOrderPurchase(UUID orderId, String createdBy) {
+        log.info("OrderService.makeCancellingAllOrderAfterPaidForOrderPurchase: {}", orderId);
+
         Order order = findOrderById(orderId);
-        Long courseId = order.getOrderType() == OrderType.PURCHASE ? order.getACourseIdOnly() : order.getExchangeDetails().courseId();
+        Long courseId = order.getACourseIdOnly();
 
-        List<Order> ordersPending = orderRepository.findAllOrderPendingByCourseId(courseId);
-        for (Order orderPending : ordersPending) {
-            orderPending.cancelOrder();
-            orderRepository.save(orderPending);
-        }
+        orderRepository.findAllByStatusAndCreatedBy(Status.PENDING, createdBy)
+                .stream()
+                .filter(o -> o.getOrderType() == OrderType.PURCHASE)
+                .filter(o -> o.getACourseIdOnly().equals(courseId))
+                .forEach(o -> {
+                    o.cancelOrder();
+                    orderRepository.save(o);
+                });
+    }
+
+    @Override
+    public void makeCancellingAllOrderAfterPaidForOrderExchange(UUID orderId, String createdBy) {
+        log.info("OrderService.makeCancellingAllOrderAfterPaidForOrderExchange: {}", orderId);
+
+        Order order = findOrderById(orderId);
+        Long courseId = order.getExchangeDetails().courseId();
+
+        orderRepository.findAllByStatusAndCreatedBy(Status.PENDING, createdBy)
+                .stream()
+                .filter(o -> o.getOrderType() == OrderType.EXCHANGE)
+                .filter(o -> o.getExchangeDetails().courseId().equals(courseId))
+                .forEach(o -> {
+                    o.cancelOrder();
+                    orderRepository.save(o);
+                });
     }
 
     @Override
     public Order createOrder(String currentUsername, OrderRequestDTO orderRequestDTO) {
+        log.info("OrderService.createOrder: {}, {}", currentUsername, orderRequestDTO);
+
         if (rolesBaseUtil.isAdmin() || rolesBaseUtil.isTeacher()) {
             throw new AccessDeniedException("Only authenticated users can create orders");
         }
@@ -110,6 +137,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public Order createOrderExchange(Long courseId, Long enrollmentId, MonetaryAmount additionalPrice) {
+        log.info("OrderService.createOrderExchange: {}, {}, {}", courseId, enrollmentId, additionalPrice);
+
         if (rolesBaseUtil.isAdmin() || rolesBaseUtil.isTeacher()) {
             throw new AccessDeniedException("Only authenticated users can create orders");
         }

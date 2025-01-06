@@ -20,6 +20,8 @@ public interface OrderService {
 
     void paymentSucceeded(UUID orderId);
 
-    void makeCancelledAllOrderByCourseId(UUID orderId);
+    void makeCancellingAllOrderAfterPaidForOrderPurchase(UUID orderId, String createdBy);
+
+    void makeCancellingAllOrderAfterPaidForOrderExchange(UUID orderId, String createdBy);
 
 }

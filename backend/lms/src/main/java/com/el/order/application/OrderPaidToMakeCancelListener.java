@@ -15,12 +15,12 @@ public class OrderPaidToMakeCancelListener {
 
     @ApplicationModuleListener
     public void makeCancelAllOrderPendingForOrderPurchasePaid(Order.OrderPaidEvent e) {
-        orderService.makeCancelledAllOrderByCourseId(e.id());
+        orderService.makeCancellingAllOrderAfterPaidForOrderPurchase(e.id(), e.createdBy());
     }
 
     @ApplicationModuleListener
     public void makeCancelAllOrderPendingForOrderExchangePaid(Order.OrderExchangePaidEvent e) {
-        orderService.makeCancelledAllOrderByCourseId(e.id());
+        orderService.makeCancellingAllOrderAfterPaidForOrderExchange(e.id(), e.createdBy());
     }
 
 }
