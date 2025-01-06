@@ -3,7 +3,7 @@ import {OrdersService} from "../../service/orders.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterLink} from "@angular/router";
 import {Order, OrderItem} from "../../model/order";
 import {PaginationUtils} from "../../../common/dto/page-wrapper";
-import {forkJoin, map, Subscription} from "rxjs";
+import {forkJoin, map, of, Subscription} from "rxjs";
 import {ErrorHandler} from "../../../common/error-handler.injectable";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {BrowseCourseService} from "../../../browse-course/service/browse-course.service";
@@ -12,12 +12,12 @@ import {shortUUID} from "../../../common/utils";
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-    imports: [
-        RouterLink,
-        NgForOf,
-        NgIf,
-        DatePipe
-    ],
+  imports: [
+    RouterLink,
+    NgForOf,
+    NgIf,
+    DatePipe
+  ],
   templateUrl: './my-orders.component.html',
 })
 export class MyOrdersComponent implements OnInit, OnDestroy {
@@ -65,12 +65,12 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
           const orders = pageWrapper.content as Order[];
           forkJoin(
             orders.map(order =>
-              forkJoin(
-                order.items.map(item =>
+              order.items.length > 0
+                ? forkJoin(order.items.map(item =>
                   this.browseCourseService.getPublishedCourse(item.course)
                     .pipe(map(course => ({...item, courseDetail: course})))
-                )
-              ).pipe(map(itemsWithDetails => ({ ...order, items: itemsWithDetails })))
+                )).pipe(map(itemsWithDetails => ({ ...order, items: itemsWithDetails })))
+                : of({ ...order, items: [] })
             )
           ).subscribe({
             next: (ordersWithDetails) => {
@@ -83,7 +83,7 @@ export class MyOrdersComponent implements OnInit, OnDestroy {
       });
   }
 
-  getCourseIdAndTitle(items: OrderItem[]): {id: number, title: string} | null {
+  getCourseIdAndTitle(items: OrderItem[]): { id: number, title: string } | null {
     if (items.length > 0) {
       return {
         id: items[0].courseDetail.id,
