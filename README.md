@@ -12,51 +12,42 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/thnguyen101/e-learning-project)
 ![GitHub top language](https://img.shields.io/github/languages/top/thnguyen101/e-learning-project)
 
+## Table of Contents
+<!-- TOC -->
+  * [Introduction](#introduction)
+  * [Prerequisites](#prerequisites)
+  * [Run application](#run-application)
+  * [Q&A](#qa)
+<!-- TOC -->
+---
 ## Introduction
-### 🗄️ Project Structure
+- [🗄️ Frontend Structure](docs/frontend_structure.md)
+- [🗄️ Backend Structure](docs/backend_structure.md)
+---
 
-```sh
-src
-├── app
-│   ├── browse-course                          # Module: Books
-│   │   ├── page                               # Contains pages of the module
-│   │   │   └── book-list                      # Page: Book List
-│   │   │       ├── book-list.component.ts     # Component logic
-│   │   │       ├── book-list.component.html   # Component template
-│   │   │       └── book-list.component.css    # Component styles
-│   │   ├── service                            # Service to call API
-│   │   │   └── book.service.ts
-│   │   └── model                              # Models for data transfer
-│   │       └── book.ts
-│   ├── common                                 # Shared common functionality
-│   │   ├── components                         # Shared UI components
-│   │   └── auth                               # Authentication-related files
-│   ├── app.component.ts                       # Main app component
-│   ├── app.component.html                     # Main app template
-│   ├── app.component.css                      # Main app styles
-│   ├── app.routes.ts                          # Routing configurations
-├── favicon.ico
-├── main.ts                                    # Entry point for the app
-├── index.html                                 # Main HTML file
-├── styles.css                                 # Global styles
-└── assets                                     # Static assets (images, fonts, etc.)
-```
+## Prerequisites
+- Git ([How?](docs/how_to_install_git.md))
+- Java 17 ([How?](docs/how_to_install_java.md))
+- Docker ([How?](docs/how_to_install_docker.md))
 
-## How to build
-### Prerequisites
-- Git (You can use [Git](https://git-scm.com/) to install it)
-- Java 17 (You can use [SDKMAN](https://sdkman.io/) to install it)
-- Docker, Docker Compose (You can use [Docker](https://docs.docker.com/get-docker/) to install it)
-
-### 1. Run this command
+## Run application
 ```bash
+# For Linux and macOS
 curl -sSL https://raw.githubusercontent.com/thnguyen101/e-learning-project/main/install.sh | bash
 ```
 
-### 2. Open your browser and go to 
+```bash
+# For Windows - Open Git Bash
+git clone https://github.com/thnguyen101/e-learning-project.git
+cd e-learning-project
+chmod +x build.sh
+./build.sh without-angular
+```
+
+Check it out at:
 > http://**{hostname}**:7080/angular-ui/ 
 
-The host is your computer's hostname. You can get it by running this command in linux
-```bash
-hostname
-```
+---
+
+## Q&A
+- [How to get the value of `hostname`?](docs/how_to_get_the_value_of_hostname.md)
