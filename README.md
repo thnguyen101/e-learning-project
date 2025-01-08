@@ -12,8 +12,9 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/thnguyen101/e-learning-project)
 ![GitHub top language](https://img.shields.io/github/languages/top/thnguyen101/e-learning-project)
 
+---
 ## Introduction
-### 🗄️ Project Structure
+### 🗄️ Frontend Structure
 
 ```sh
 src
@@ -42,21 +43,21 @@ src
 └── assets                                     # Static assets (images, fonts, etc.)
 ```
 
-## How to build
-### Prerequisites
-- Git (You can use [Git](https://git-scm.com/) to install it)
-- Java 17 (You can use [SDKMAN](https://sdkman.io/) to install it)
-- Docker, Docker Compose (You can use [Docker](https://docs.docker.com/get-docker/) to install it)
+---
 
-### 1. Run this command
+## Prerequisites
+- Git ([How?](docs/how_to_install_git.md))
+- Java 17 ([How?](docs/how_to_install_java.md))
+- Docker ([How?](docs/how_to_install_docker.md))
+
+## Run application
 ```bash
 curl -sSL https://raw.githubusercontent.com/thnguyen101/e-learning-project/main/install.sh | bash
 ```
-
-### 2. Open your browser and go to 
+Check it out at:
 > http://**{hostname}**:7080/angular-ui/ 
 
-The host is your computer's hostname. You can get it by running this command in linux
-```bash
-hostname
-```
+---
+
+## Q&A
+- [How to get the value of `hostname`?](docs/how_to_get_the_value_of_hostname.md)
