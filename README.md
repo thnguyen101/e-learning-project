@@ -32,8 +32,18 @@
 
 ## Run application
 ```bash
+# For Linux and macOS
 curl -sSL https://raw.githubusercontent.com/thnguyen101/e-learning-project/main/install.sh | bash
 ```
+
+```bash
+# For Windows - Open Git Bash
+git clone https://github.com/thnguyen101/e-learning-project.git
+cd e-learning-project
+chmod +x build.sh
+./build.sh without-angular
+```
+
 Check it out at:
 > http://**{hostname}**:7080/angular-ui/ 
 
