@@ -92,7 +92,10 @@ public class Discount {
                 if (multiply.isGreaterThan(this.maxValue)) {
                     return this.maxValue;
                 }
-                return multiply;
+
+                long discountInCents = multiply.getNumber().longValueExact();
+                long roundedDiscount = (discountInCents / 1000) * 1000;
+                return Money.of(roundedDiscount, originalPrice.getCurrency());
             } else if (this.type == Type.FIXED) {
                 return this.fixedPrice;
             }

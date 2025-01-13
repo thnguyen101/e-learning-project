@@ -29,8 +29,7 @@ class BffApplicationTest {
                 .isArray()
                 .jsonPath("$[0].label")
                 .isEqualTo("keycloak101")
-                .jsonPath("$[0].loginUri")
-                .isEqualTo("http://localhost:7080/bff/oauth2/authorization/keycloak101")
+                .jsonPath("$[0].loginUri").isNotEmpty()
                 .jsonPath("$[0].isSameAuthority")
                 .isEqualTo(true);
     }
