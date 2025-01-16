@@ -46,3 +46,17 @@ tasks.named('test') {
 springBoot {
 	buildInfo()
 }
+
+bootBuildImage {
+	builder = "docker.io/paketobuildpacks/builder-jammy-base:0.4.300"
+	imageName = "${project.name}:${project.version}"
+	environment = ["BP_JVM_VERSION": "17"]
+
+	docker {
+		publishRegistry {
+			username = project.findProperty("registryUsername")
+			password = project.findProperty("registryToken")
+			url = project.findProperty("registryUrl")
+		}
+	}
+}
