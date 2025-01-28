@@ -1,5 +1,6 @@
 package com.el.common.upload.application.impl.awss3;
 
+import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -13,10 +14,15 @@ import java.net.URI;
 @Configuration
 public class AwsS3ClientConfig {
 
+    @Value("${s3-access-key}")
+    private String accessKey;
+
+    @Value("${s3-secret-key}")
+    private String secretKey;
+
     @Bean
-    public S3Client s3Client(AwsS3Properties properties) {
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(
-                properties.accessKey(), properties.secretKey());
+    public S3Client s3Client() {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
         return S3Client.builder()
                 .endpointOverride(URI.create("https://sgp1.digitaloceanspaces.com"))
                 .region(Region.AP_SOUTHEAST_1)

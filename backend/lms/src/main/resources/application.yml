@@ -2,15 +2,22 @@ scheme: http
 hostname: localhost
 reverse-proxy-port: 7080
 reverse-proxy-uri: ${scheme}://${hostname}:${reverse-proxy-port}
-authorization-server-prefix: /auth
-realm_name: keycloak101
-client_id: bff-client
-client_secret: secret
-issuer: ${reverse-proxy-uri}${authorization-server-prefix}/realms/${realm_name}
-lms-port: 7084
+
+keycloak-host: ${reverse-proxy-uri}/auth
+keycloak-realm: keycloak101
+oauth2-issuer: ${keycloak-host}/realms/${keycloak-realm}
+oauth2-client-id: bff-client
+oauth2-client-secret: secret
+
+s3-access-key: ${S3_ACCESS_KEY}
+s3-secret-key: ${S3_SECRET_KEY}
+s3-endpoint: ${S3_ENDPOINT}
+s3-bucket-name: ${S3_BUCKET_NAME}
+
+stripe-secret-key: ${STRIPE_SECRET_KEY}
 
 server:
-  port: ${lms-port}
+  port: 7084
   shutdown: graceful
   tomcat:
     threads:
@@ -37,7 +44,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${issuer}
+          issuer-uri: ${oauth2-issuer}
   modulith:
     events:
       jdbc:
@@ -67,16 +74,3 @@ error:
     full-stacktrace-http-statuses: 5xx
     log-levels:
       5xx: ERROR
-
-STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-KEYSTORE_PASSWORD: secret
-KEY_PASSWORD: secret
-KEYSTORE_PATH: src/main/resources/keystore/lms.p12
-KEYSTORE_TYPE: PKCS12
-KEY_ALIAS: lms
-
-s3:
-  access-key: ${S3_ACCCESS_KEY}
-  secret-key: ${S3_SECRET_KEY}
-  endpoint: ${S3_ENDPOINT}
-  bucket-name: ${S3_BUCKET_NAME}

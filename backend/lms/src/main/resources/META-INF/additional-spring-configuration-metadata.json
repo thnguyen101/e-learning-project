@@ -1,0 +1,74 @@
+{
+  "properties": [
+    {
+      "name": "scheme",
+      "type": "java.lang.String",
+      "description": "'http' or 'https', used to build URIs involved in authentication and can be used in 'gateway-uri' or 'ui-uri'"
+    },
+    {
+      "name": "hostname",
+      "type": "java.lang.String",
+      "description": "the host name"
+    },
+    {
+      "name": "reverse-proxy-uri",
+      "type": "java.net.URI",
+      "description": "Base URI for the reverse-proxy"
+    },
+    {
+      "name": "reverse-proxy-port",
+      "type": "java.lang.Integer",
+      "description": "The port of the reverse-proxy-uri"
+    },
+    {
+      "name": "oauth2-client-id",
+      "type": "java.lang.String",
+      "description": "client-id used for client registration configuration and resource_access roles"
+    },
+    {
+      "name": "oauth2-client-secret",
+      "type": "java.lang.String",
+      "description": "client-secret used for client registration configuration"
+    },
+    {
+      "name": "keycloak-host",
+      "type": "java.lang.String",
+      "description": "Scheme, hostname and port for Keycloak server"
+    },
+    {
+      "name": "keycloak-realm",
+      "type": "java.lang.String",
+      "description": "Keycloak 'realm'"
+    },
+    {
+      "name": "oauth2-issuer",
+      "type": "java.net.URI",
+      "description": "OpenID issuer URI"
+    },
+    {
+      "name": "s3-access-key",
+      "type": "java.lang.String",
+      "description": "AWS S3's Access key"
+    },
+    {
+      "name": "s3-secret-key",
+      "type": "java.lang.String",
+      "description": "AWS S3's Secret key"
+    },
+    {
+      "name": "s3-endpoint",
+      "type": "java.lang.String",
+      "description": "AWS S3's endpoint"
+    },
+    {
+      "name": "s3-bucket-name",
+      "type": "java.lang.String",
+      "description": "AWS S3's bucket name"
+    },
+    {
+      "name": "stripe-secret-key",
+      "type": "java.lang.String",
+      "description": "Stripe's secret key"
+    }
+  ]
+}

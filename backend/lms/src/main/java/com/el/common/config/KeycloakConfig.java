@@ -1,4 +1,4 @@
-package com.el.common.auth.application.impl;
+package com.el.common.config;
 
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -10,26 +10,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakConfig {
 
-    @Value("${reverse-proxy-uri}")
-    private String reverseProxyUri;
+    @Value("${keycloak-host}")
+    private String keycloakHost;
 
-    @Value("${authorization-server-prefix}")
-    private String authorizationServerPrefix;
+    @Value("${keycloak-realm}")
+    private String keycloakRealm;
 
-    @Value("${realm_name}")
-    private String realm;
-
-    @Value("${client_id}")
+    @Value("${oauth2-client-id}")
     private String clientId;
 
-    @Value("${client_secret}")
+    @Value("${oauth2-client-secret}")
     private String clientSecret;
 
     @Bean
     public Keycloak keycloak() {
         return KeycloakBuilder.builder()
-                .serverUrl(reverseProxyUri + authorizationServerPrefix)
-                .realm(realm)
+                .serverUrl(keycloakHost)
+                .realm(keycloakRealm)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)

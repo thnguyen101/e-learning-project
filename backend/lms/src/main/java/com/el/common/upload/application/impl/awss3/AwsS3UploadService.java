@@ -2,6 +2,7 @@ package com.el.common.upload.application.impl.awss3;
 
 import com.el.common.upload.application.UploadService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -25,11 +26,21 @@ import java.util.UUID;
 @Slf4j
 public class AwsS3UploadService implements UploadService {
 
-    private final AwsS3Properties awsS3Properties;
+    @Value("${s3-access-key}")
+    private String accessKey;
+
+    @Value("${s3-secret-key}")
+    private String secretKey;
+
+    @Value("${s3-bucket-name}")
+    private String bucketName;
+
+    @Value("${s3-endpoint}")
+    private String endpoint;
+
     private final S3Client s3Client;
 
-    public AwsS3UploadService(AwsS3Properties awsS3Properties, S3Client s3Client) {
-        this.awsS3Properties = awsS3Properties;
+    public AwsS3UploadService(S3Client s3Client) {
         this.s3Client = s3Client;
     }
 
@@ -54,7 +65,7 @@ public class AwsS3UploadService implements UploadService {
     public byte[] downloadFile(String url) {
         String key = cutURL(url);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(awsS3Properties.bucketName())
+                .bucket(bucketName)
                 .key(key)
                 .build();
 
@@ -72,13 +83,13 @@ public class AwsS3UploadService implements UploadService {
             S3Presigner presigner = S3Presigner.builder()
                     .region(Region.AP_SOUTHEAST_1)
                     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-                            awsS3Properties.accessKey(),
-                            awsS3Properties.secretKey()
+                            accessKey,
+                            secretKey
                     )))
                     .build();
 
             GetObjectRequest objectRequest = GetObjectRequest.builder()
-                    .bucket(awsS3Properties.bucketName())
+                    .bucket(bucketName)
                     .key(cutURL(url))
                     .build();
 
@@ -102,7 +113,7 @@ public class AwsS3UploadService implements UploadService {
     @Override
     public void deleteFiles(List<String> urls) {
         DeleteObjectsRequest deleteObjects = DeleteObjectsRequest.builder()
-                .bucket(awsS3Properties.bucketName())
+                .bucket(bucketName)
                 .delete(builder -> builder
                         .objects(urls.stream()
                                 .map(this::cutURL)
@@ -120,7 +131,7 @@ public class AwsS3UploadService implements UploadService {
     @Override
     public Map<String, String> startMultipartUpload(String fileName) {
         CreateMultipartUploadRequest request = CreateMultipartUploadRequest.builder()
-                .bucket(awsS3Properties.bucketName())
+                .bucket(bucketName)
                 .key(fileName)
                 .build();
         CreateMultipartUploadResponse multipartUpload = s3Client.createMultipartUpload(request);
@@ -138,7 +149,7 @@ public class AwsS3UploadService implements UploadService {
         String key = UUID.randomUUID() + "_" + fileName;
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(awsS3Properties.bucketName())
+                .bucket(bucketName)
                 .key(key)
                 .contentType(contentType)
                 .acl(isPrivate ? ObjectCannedACL.PRIVATE : ObjectCannedACL.PUBLIC_READ)
@@ -153,7 +164,7 @@ public class AwsS3UploadService implements UploadService {
             throw new AmazonServiceS3Exception("Upload media failed. " + e.getMessage());
         }
 
-        return awsS3Properties.endpoint() + "/" + key;
+        return endpoint + "/" + key;
     }
 
     private String cutURL(String url) {

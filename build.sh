@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Export environments from .env file
+export $(cat .env | xargs)
+
 WITHOUT_ANGULAR=false
 if [[ " $@ " =~ [[:space:]]without-angular[[:space:]] ]]; then
   WITHOUT_ANGULAR=true

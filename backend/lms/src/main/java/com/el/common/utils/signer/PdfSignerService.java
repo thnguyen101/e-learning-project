@@ -18,19 +18,14 @@ public class PdfSignerService {
 
     private final KeyStoreLoader keyStoreLoader;
 
-    @Value("${KEYSTORE_PASSWORD}")
     private String keystorePassword;
 
-    @Value("${KEY_PASSWORD}")
     private String keyPassword;
 
-    @Value("${KEYSTORE_PATH}")
     private String keystorePath;
 
-    @Value("${KEYSTORE_TYPE}")
     private String keystoreType;
 
-    @Value("${KEY_ALIAS}")
     private String keyAlias;
 
     public PdfSignerService(KeyStoreLoader keyStoreLoader) {
@@ -60,22 +55,22 @@ public class PdfSignerService {
 //        return signedOut.toByteArray();
     }
 
-    private PrivateKey loadPrivateKey() {
-        try {
-            return keyStoreLoader.loadPrivateKey(keystorePath, keystorePassword, keyAlias, keyPassword);
-        } catch (Exception e) {
-            log.error("Error loading private key from keystore: {}", e.getMessage());
-            throw new RuntimeException("Failed to load private key.", e);
-        }
-    }
-
-    private java.security.cert.Certificate[] loadCertificateChain() {
-        try {
-            return new java.security.cert.Certificate[]{keyStoreLoader.loadCertificate(keystorePath, keystorePassword, keyAlias)};
-        } catch (Exception e) {
-            log.error("Error loading certificate from keystore: {}", e.getMessage());
-            throw new RuntimeException("Failed to load certificate.", e);
-        }
-    }
+//    private PrivateKey loadPrivateKey() {
+//        try {
+//            return keyStoreLoader.loadPrivateKey(keystorePath, keystorePassword, keyAlias, keyPassword);
+//        } catch (Exception e) {
+//            log.error("Error loading private key from keystore: {}", e.getMessage());
+//            throw new RuntimeException("Failed to load private key.", e);
+//        }
+//    }
+//
+//    private java.security.cert.Certificate[] loadCertificateChain() {
+//        try {
+//            return new java.security.cert.Certificate[]{keyStoreLoader.loadCertificate(keystorePath, keystorePassword, keyAlias)};
+//        } catch (Exception e) {
+//            log.error("Error loading certificate from keystore: {}", e.getMessage());
+//            throw new RuntimeException("Failed to load certificate.", e);
+//        }
+//    }
 
 }
