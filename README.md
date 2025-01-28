@@ -7,6 +7,7 @@
               |_|           |__/
 ```
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/thnguyen101/e-learning-project/.github%2Fworkflows%2Fcommit-stage.yaml)
 ![GitHub License](https://img.shields.io/github/license/thnguyen101/e-learning-project)
 ![GitHub language count](https://img.shields.io/github/languages/count/thnguyen101/e-learning-project)
 ![GitHub top language](https://img.shields.io/github/languages/top/thnguyen101/e-learning-project)
