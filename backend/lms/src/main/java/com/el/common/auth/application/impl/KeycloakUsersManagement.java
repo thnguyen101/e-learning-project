@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class KeycloakUsersManagement implements UsersManagement {
 
-    @Value("${realm_name}")
+    @Value("${keycloak-realm}")
     private String realmName;
 
     private final Keycloak keycloak;

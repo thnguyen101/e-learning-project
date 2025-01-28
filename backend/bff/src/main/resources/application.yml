@@ -2,18 +2,18 @@ scheme: http
 hostname: localhost
 reverse-proxy-port: 7080
 reverse-proxy-uri: ${scheme}://${hostname}:${reverse-proxy-port}
-authorization-server-prefix: /auth
-realm_name: keycloak101
-issuer: ${reverse-proxy-uri}${authorization-server-prefix}/realms/${realm_name}
-client-id: bff-client
-client-secret: secret
-bff-port: 7081
-bff-prefix: /bff
-resource-server-port: 7084
-authorities-json-path: $.roles
+
+keycloak-host: ${reverse-proxy-uri}/auth
+keycloak-realm: keycloak101
+oauth2-issuer: ${keycloak-host}/realms/${keycloak-realm}
+oauth2-client-id: bff-client
+oauth2-client-secret: secret
+
+bff-public-uri: ${reverse-proxy-uri}/bff
+lms-internal-uri: ${scheme}://${hostname}:7084
 
 server:
-  port: ${bff-port}
+  port: 7081
 
 spring:
   application:
@@ -22,11 +22,10 @@ spring:
     gateway:
       routes:
         - id: bff
-          uri: ${scheme}://${hostname}:${resource-server-port}
+          uri: ${lms-internal-uri}
           predicates:
             - Path=/api/**
           filters:
-            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
             - TokenRelay=
             - SaveSession
             - StripPrefix=1
@@ -34,27 +33,29 @@ spring:
     oauth2:
       client:
         provider:
-          keycloak101:
-            issuer-uri: ${issuer}
+          keycloak:
+            issuer-uri: ${oauth2-issuer}
+            user-name-attribute: preferred_username
         registration:
-          keycloak101:
-            provider: keycloak101
+          e-learning-project-bff:
+            provider: keycloak
             authorization-grant-type: authorization_code
-            client-id: ${client-id}
-            client-secret: ${client-secret}
-            scope: openid,profile,email,offline_access
+            client-id: ${oauth2-client-id}
+            client-secret: ${oauth2-client-secret}
+            scope: openid, profile, email, offline_access
+
 
 com:
   c4-soft:
     springaddons:
       oidc:
         ops:
-          - iss: ${issuer}
+          - iss: ${oauth2-issuer}
+            username-claim: preferred_username
             authorities:
-              - path: ${authorities-json-path}
-            aud: ${audience}
+              - path: $.roles
         client:
-          client-uri: ${reverse-proxy-uri}${bff-prefix}
+          client-uri: ${bff-public-uri}
           security-matchers:
             - /api/**
             - /login/**
@@ -64,20 +65,17 @@ com:
             - /api/**
             - /login/**
             - /oauth2/**
-            - /logout/connect/back-channel/keycloak101
-          post-logout-redirect-host: ${hostname}
+            - /logout/connect/back-channel/e-learning-project-bff
           csrf: cookie_accessible_from_js
           oauth2-redirections:
+            authentication-entry-point: UNAUTHORIZED
             rp-initiated-logout: accepted
           back-channel-logout:
             enabled: true
-            # internal-logout-uri: ${reverse-proxy-uri}${bff-prefix}/logout
-            # should work too, but there is no reason to go through the reverse proxy for this internal call
-        # SecurityFilterChain with oauth2ResourceServer() (sessions and CSRF protection disabled)
+            internal-logout-uri: ${bff-public-uri}/logout/connect/back-channel/e-learning-project-bff
         resourceserver:
           permit-all:
             - /login-options
-            - /error
             - /actuator/health/readiness
             - /actuator/health/liveness
 
@@ -89,7 +87,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: gateway, health, info
+        include: '*'
   health:
     livenessstate:
       enabled: true

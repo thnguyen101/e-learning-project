@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class StripePaymentGateway {
 
-    @Value("${STRIPE_SECRET_KEY}")
+    @Value("${stripe-secret-key}")
     String secretKey;
 
     @PostConstruct

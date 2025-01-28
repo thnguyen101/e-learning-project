@@ -646,7 +646,7 @@
       "oidc.ciba.grant.enabled" : "false",
       "client.secret.creation.time" : "1728051978",
       "backchannel.logout.session.required" : "true",
-      "backchannel.logout.url" : "http://localhost:9000/logout/connect/back-channel/keycloak101",
+      "backchannel.logout.url" : "http://localhost:9000/logout/connect/back-channel/e-learning-project-bff",
       "post.logout.redirect.uris" : "http://localhost:9000/##http://127.0.0.1:9000/",
       "display.on.consent.screen" : "false",
       "oauth2.device.authorization.grant.enabled" : "false",
