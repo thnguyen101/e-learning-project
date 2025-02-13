@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Export environments from .env file
-export $(cat .env | xargs)
-
 START_DEV=false
 
 if [[ " $@ " =~ [[:space:]]start-dev[[:space:]] ]]; then
@@ -47,6 +44,8 @@ else
 fi
 host=$(hostname | tr '[A-Z]' '[a-z]')
 sed -i "s/^HOSTNAME=.*/HOSTNAME=$host/" .env
+# Export environments from .env file
+export $(cat .env | xargs)
 
 cd backend
 rm -f "lms/src/test/resources/keycloak101-realm.json"
