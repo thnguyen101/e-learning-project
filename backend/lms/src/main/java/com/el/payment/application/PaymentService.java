@@ -6,12 +6,14 @@ import com.el.payment.domain.PaymentRepository;
 import com.el.payment.web.dto.PaymentRequest;
 import com.stripe.exception.*;
 import com.stripe.model.Charge;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 
+@Slf4j
 @Service
 public class PaymentService {
 
@@ -66,6 +68,7 @@ public class PaymentService {
         }
 
         if (isPaymentFailed) {
+            log.error("Payment failed: {}", failureMessage);
             payment.markFailed(failureMessage);
         }
 

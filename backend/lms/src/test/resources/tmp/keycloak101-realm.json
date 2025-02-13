@@ -629,7 +629,7 @@
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "secret" : "secret",
+    "secret" : "s3cr3t",
     "redirectUris" : [ "*" ],
     "webOrigins" : [ "*" ],
     "notBefore" : 0,

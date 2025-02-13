@@ -3,9 +3,10 @@
 # Export environments from .env file
 export $(cat .env | xargs)
 
-WITHOUT_ANGULAR=false
-if [[ " $@ " =~ [[:space:]]without-angular[[:space:]] ]]; then
-  WITHOUT_ANGULAR=true
+START_DEV=false
+
+if [[ " $@ " =~ [[:space:]]start-dev[[:space:]] ]]; then
+    START_DEV=true
 fi
 
 echo "
@@ -19,10 +20,10 @@ echo "
 echo "* To build Spring Boot native images, run with the \"native\" argument: \"sh ./build.sh native\" (images will take much longer to build). *"
 echo "* To build without Angular, run with the \"without-angular\" argument: \"sh ./build.sh without-angular\".                                 *"
 echo "* This build script tries to auto-detect ARM64 (Apple Silicon) to build the appropriate Spring Boot Docker images.                        *"
-if $WITHOUT_ANGULAR; then
-  echo "Without Angular."
+if $START_DEV; then
+  echo "Dev mode."
 else
-  echo "With Angular."
+  echo "Production mode."
 fi
 
 
@@ -47,6 +48,10 @@ fi
 host=$(echo $HOSTNAME | tr '[A-Z]' '[a-z]')
 
 cd backend
+rm -f "lms/src/test/resources/keycloak101-realm.json"
+cp lms/src/test/resources/tmp/keycloak101-realm.json lms/src/test/resources/keycloak101-realm.json
+$SED "s/s3cr3t/${OAUTH2_CLIENT_SECRET}/g" lms/src/test/resources/keycloak101-realm.json
+
 echo "***********************"
 echo "sh ./gradlew clean build"
 echo "***********************"
@@ -78,6 +83,7 @@ rm -f "keycloak/import/keycloak101-realm.json"
 mkdir -p keycloak/import
 cp keycloak101-realm.json keycloak/import/keycloak101-realm.json
 $SED "s/LOCALHOST_NAME/${host}/g" keycloak/import/keycloak101-realm.json
+$SED "s/s3cr3t/${OAUTH2_CLIENT_SECRET}/g" keycloak/import/keycloak101-realm.json
 rm -f "keycloak/import/keycloak101-realm.json''"
 
 cd angular-ui/
@@ -85,7 +91,7 @@ rm src/app/app.config.ts
 cp ../angular-ui.app.config.ts src/app/app.config.ts
 $SED "s/LOCALHOST_NAME/${host}/g" src/app/app.config.ts
 rm -f "src/app/app.config.ts''"
-if $WITHOUT_ANGULAR; then
+if $START_DEV; then
   echo "Skipping angular building."
   echo ""
 else
@@ -97,41 +103,43 @@ cd ..
 cd nginx-reverse-proxy/
 rm nginx.conf
 
-if $WITHOUT_ANGULAR; then
+if $START_DEV; then
   cp ../nginx-local.conf ./nginx.conf
 else
   cp ../nginx.conf ./
 fi
 
 $SED "s/LOCALHOST_NAME/${host}/g" nginx.conf
-if $WITHOUT_ANGULAR; then
-  $SED "s/4201/4200/g" nginx.conf
-fi
+
+# Building Nginx Reverse proxy
+echo "Build NGINX reverse proxy..."
+docker build -t nginx-reverse-proxy .
 cd ..
 
-if $WITHOUT_ANGULAR; then
-  docker build -t nginx-reverse-proxy ./nginx-reverse-proxy
+
+if $START_DEV; then
   docker compose -f compose-${host}.yml up -d nginx-reverse-proxy bff lms
 else
-  docker build -t nginx-reverse-proxy ./nginx-reverse-proxy
+  echo "Build Angular..."
   docker build -t angular-ui ./angular-ui
   docker compose -f compose-${host}.yml up -d
 fi
 
 echo ""
 echo "Open the following in a new private navigation window."
-
+if $START_DEV; then
+  echo "Keycloak as admin / ${KEYCLOAK_ADMIN}:${KEYCLOAK_ADMIN_PASSWORD}"
+fi
 echo ""
-echo "Keycloak as admin / admin:secret"
 echo "http://${host}:7080/auth/admin/master/console/#/keycloak101"
 
 echo ""
 echo "Frontends"
 echo "Please use the url below to access angular:"
-echo http://${host}:7080/angular-ui/
-if $WITHOUT_ANGULAR; then
+echo http://${host}:7080/ui/
+if $START_DEV; then
   cd angular-ui/
   npm i
   ng serve --host 0.0.0.0 --port 4200
-  xdg-open "http://${host}:7080/angular-ui/"
+  xdg-open "http://${host}:7080/ui/"
 fi

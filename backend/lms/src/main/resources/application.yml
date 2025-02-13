@@ -1,13 +1,12 @@
 scheme: http
 hostname: localhost
-reverse-proxy-port: 7080
-reverse-proxy-uri: ${scheme}://${hostname}:${reverse-proxy-port}
+reverse-proxy-uri: ${scheme}://${hostname}
 
 keycloak-host: ${reverse-proxy-uri}/auth
 keycloak-realm: keycloak101
 oauth2-issuer: ${keycloak-host}/realms/${keycloak-realm}
 oauth2-client-id: bff-client
-oauth2-client-secret: secret
+oauth2-client-secret: s3cr3t
 
 s3-access-key: ${S3_ACCESS_KEY}
 s3-secret-key: ${S3_SECRET_KEY}

@@ -28,5 +28,6 @@ jobs:
 
       - name: Build with Gradle
         run: |
+          cp backend/lms/src/test/resources/tmp/keycloak101-realm.json backend/lms/src/test/resources/keycloak101-realm.json
           cd backend/
           ./gradlew build
