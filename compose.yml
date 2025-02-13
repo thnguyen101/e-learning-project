@@ -25,7 +25,7 @@ services:
 
   keycloak:
     container_name: el.auth
-    image: quay.io/keycloak/keycloak:24.0.0
+    image: quay.io/keycloak/keycloak:23.0.5
     command:
       - start-dev
       - --import-realm

@@ -88,7 +88,7 @@ rm -f "compose-${host}.yml''"
 
 rm -f "keycloak/import/keycloak101-realm.json"
 mkdir -p keycloak/import
-cp keycloak101-realm.json keycloak/import/keycloak101-realm.json
+cp keycloak101-realm-23.json keycloak/import/keycloak101-realm.json
 $SED "s/LOCALHOST_NAME/${host}/g" keycloak/import/keycloak101-realm.json
 $SED "s/s3cr3t/${OAUTH2_CLIENT_SECRET}/g" keycloak/import/keycloak101-realm.json
 rm -f "keycloak/import/keycloak101-realm.json''"
