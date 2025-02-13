@@ -45,7 +45,8 @@ if [ ${#GRADLE_PROFILES[@]} -eq 0 ]; then
 else
   GRADLE_PROFILE_ARG="-P$(IFS=, ; echo "${GRADLE_PROFILES[*]}")"
 fi
-host=$(echo $HOSTNAME | tr '[A-Z]' '[a-z]')
+host=$(hostname | tr '[A-Z]' '[a-z]')
+sed -i "s/^HOSTNAME=.*/HOSTNAME=$host/" .env
 
 cd backend
 rm -f "lms/src/test/resources/keycloak101-realm.json"
