@@ -1,6 +1,10 @@
 #!/bin/bash
 
+export $(cat .env | xargs)
+
+
 START_DEV=false
+host=$(hostname | tr '[A-Z]' '[a-z]')
 
 
 if [[ " $@ " =~ [[:space:]]start-dev[[:space:]] ]]; then
@@ -18,18 +22,24 @@ echo "
 echo "* To build Spring Boot native images, run with the \"native\" argument: \"sh ./build.sh native\" (images will take much longer to build). *"
 echo "* To build without Angular, run with the \"without-angular\" argument: \"sh ./build.sh without-angular\".                                 *"
 echo "* This build script tries to auto-detect ARM64 (Apple Silicon) to build the appropriate Spring Boot Docker images.                        *"
-if $START_DEV; then
-  echo "Dev mode."
-else
-  echo "Production mode."
-fi
-
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   SED="sed -i '' -e"
 else
   SED="sed -i -e"
 fi
+
+if $START_DEV; then
+  echo "Dev mode."
+  $SED -i "s/^HOSTNAME=.*/HOSTNAME=$host/" .env
+else
+  echo "Production mode."
+  host=$HOSTNAME
+fi
+
+# Export environments from .env file
+export $(cat .env | xargs)
+
 
 GRADLE_PROFILES=()
 if [[ `uname -m` == "arm64" ]]; then
@@ -43,11 +53,6 @@ if [ ${#GRADLE_PROFILES[@]} -eq 0 ]; then
 else
   GRADLE_PROFILE_ARG="-P$(IFS=, ; echo "${GRADLE_PROFILES[*]}")"
 fi
-host=$(hostname | tr '[A-Z]' '[a-z]')
-sed -i "s/^HOSTNAME=.*/HOSTNAME=$host/" .env
-# Export environments from .env file
-export $(cat .env | xargs)
-
 
 cd backend
 rm -f "lms/src/test/resources/keycloak101-realm.json"
