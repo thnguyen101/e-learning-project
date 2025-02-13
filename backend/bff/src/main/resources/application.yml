@@ -1,7 +1,6 @@
 scheme: http
 hostname: localhost
-reverse-proxy-port: 7080
-reverse-proxy-uri: ${scheme}://${hostname}:${reverse-proxy-port}
+reverse-proxy-uri: ${scheme}://${hostname}
 
 keycloak-host: ${reverse-proxy-uri}/auth
 keycloak-realm: keycloak101
@@ -13,7 +12,7 @@ bff-public-uri: ${reverse-proxy-uri}/bff
 lms-internal-uri: ${scheme}://${hostname}:7084
 
 server:
-  port: 7081
+  port: 7080
 
 spring:
   application:
@@ -73,6 +72,7 @@ com:
           back-channel-logout:
             enabled: true
             internal-logout-uri: ${bff-public-uri}/logout/connect/back-channel/e-learning-project-bff
+          post-logout-redirect-path: /ui
         resourceserver:
           permit-all:
             - /login-options

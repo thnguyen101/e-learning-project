@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -58,22 +59,25 @@ abstract class AbstractLmsApplicationTests {
     @Autowired
     protected DiscountRepository discountRepository;
 
+    @Value("${oauth2-client-secret}")
+    private String oauth2ClientSecret;
+
     @DynamicPropertySource
     static void keycloakProperties(DynamicPropertyRegistry registry) {
         KeycloakTestContainer.keycloakProperties(registry);
     }
 
     @BeforeAll
-    static void generateAccessToken() {
+    void generateAccessToken() {
         WebClient webClient = WebClient.builder()
                 .baseUrl(KeycloakTestContainer.getInstance().getAuthServerUrl() + "/realms/keycloak101/protocol/openid-connect/token")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
-        userToken = authenticateWith("user", "1", webClient);
-        user2Token = authenticateWith("user2", "1", webClient);
-        teacherToken = authenticateWith("teacher", "1", webClient);
-        bossToken = authenticateWith("boss", "1", webClient);
+        userToken = authenticateWith("user", "1", webClient, oauth2ClientSecret);
+        user2Token = authenticateWith("user2", "1", webClient, oauth2ClientSecret);
+        teacherToken = authenticateWith("teacher", "1", webClient, oauth2ClientSecret);
+        bossToken = authenticateWith("boss", "1", webClient, oauth2ClientSecret);
     }
 
     @Test
@@ -388,13 +392,13 @@ abstract class AbstractLmsApplicationTests {
                 .expectBody(Long.class).returnResult().getResponseBody();
     }
 
-    private static KeycloakToken authenticateWith(
-            String username, String password, WebClient webClient) {
+    private KeycloakToken authenticateWith(
+            String username, String password, WebClient webClient, String oauth2ClientSecret) {
         return webClient
                 .post()
                 .body(BodyInserters.fromFormData("grant_type", "password")
                         .with("client_id", "bff-client")
-                        .with("client_secret", "secret")
+                        .with("client_secret", oauth2ClientSecret)
                         .with("username", username)
                         .with("password", password)
                 )

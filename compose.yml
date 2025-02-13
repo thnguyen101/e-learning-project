@@ -3,7 +3,7 @@ services:
     container_name: el.nginx-reverse-proxy
     image: nginx-reverse-proxy
     ports:
-      - 7080:7080
+      - 80:80
     extra_hosts:
       - "host.docker.internal:host-gateway"
       - "LOCALHOST_NAME:host-gateway"
@@ -35,15 +35,15 @@ services:
       - ./keycloak/import/:/opt/keycloak/data/import/
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_URL: ${POSTGRES_KEYCLOAK_URL}
       KC_DB_SCHEMA: public
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: secret
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: secret
+      KC_DB_USERNAME: ${POSTGRES_USERNAME}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HTTP_PORT: 8080
-      KC_HOSTNAME_URL: http://LOCALHOST_NAME:7080/auth
-      KC_HOSTNAME_ADMIN_URL: http://LOCALHOST_NAME:7080/auth
+      KC_HOSTNAME_URL: http://LOCALHOST_NAME/auth
+      KC_HOSTNAME_ADMIN_URL: http://LOCALHOST_NAME/auth
       KC_HOSTNAME_STRICT_BACKCHANNEL: true
       KC_HTTP_RELATIVE_PATH: /auth/
       KC_HTTP_ENABLED: true
@@ -65,7 +65,7 @@ services:
     container_name: el.angular-ui
     image: angular-ui
     ports:
-      - 4201:80
+      - 4200:80
     extra_hosts:
       - "host.docker.internal:host-gateway"
       - "LOCALHOST_NAME:host-gateway"
@@ -76,12 +76,11 @@ services:
     ports:
       - 7084:7084
     environment:
-      HOSTNAME: LOCALHOST_NAME
-      SERVER_ADDRESS: 0.0.0.0
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lms
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: secret
-      SPRING_PROFILES_ACTIVE: local
+      HOSTNAME: ${HOSTNAME}
+      OAUTH2_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
+      SPRING_DATASOURCE_URL: ${POSTGRES_LMS_URL}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_ENDPOINT: ${S3_ENDPOINT}
@@ -98,11 +97,10 @@ services:
     container_name: el.bff
     image: bff
     ports:
-      - 7081:7081
+      - 7080:7080
     environment:
-      HOSTNAME: LOCALHOST_NAME
-      SERVER_ADDRESS: 0.0.0.0
-      CLIENT_SECRET: secret
+      HOSTNAME: ${HOSTNAME}
+      OAUTH2_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
     depends_on:
       keycloak:
         condition: service_healthy
