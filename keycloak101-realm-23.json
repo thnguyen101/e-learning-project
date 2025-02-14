@@ -1,6 +1,8 @@
 {
   "id" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
   "realm" : "keycloak101",
+  "displayName" : "e-learning-project",
+  "displayNameHtml" : "",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
@@ -27,13 +29,13 @@
   "oauth2DevicePollingInterval" : 5,
   "enabled" : true,
   "sslRequired" : "external",
-  "registrationAllowed" : false,
+  "registrationAllowed" : true,
   "registrationEmailAsUsername" : false,
-  "rememberMe" : false,
-  "verifyEmail" : false,
+  "rememberMe" : true,
+  "verifyEmail" : true,
   "loginWithEmailAllowed" : true,
   "duplicateEmailsAllowed" : false,
-  "resetPasswordAllowed" : false,
+  "resetPasswordAllowed" : true,
   "editUsernameAllowed" : false,
   "bruteForceProtected" : false,
   "permanentLockout" : false,
@@ -58,7 +60,7 @@
       "description" : "${role_default-roles}",
       "composite" : true,
       "composites" : {
-        "realm" : [ "offline_access", "uma_authorization" ],
+        "realm" : [ "offline_access", "uma_authorization", "user" ],
         "client" : {
           "account" : [ "manage-account", "view-profile" ]
         }
@@ -67,9 +69,38 @@
       "containerId" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
       "attributes" : { }
     }, {
+      "id" : "66127308-0b73-4b9d-ab4a-e66d3fba8f41",
+      "name" : "user",
+      "description" : "",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
+      "attributes" : { }
+    }, {
       "id" : "2e9925d9-82cc-41d0-9b1b-c494fd95d408",
       "name" : "uma_authorization",
       "description" : "${role_uma_authorization}",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
+      "attributes" : { }
+    }, {
+      "id" : "11a7c665-7edb-4602-8094-e831a50d74f0",
+      "name" : "admin",
+      "description" : "",
+      "composite" : true,
+      "composites" : {
+        "client" : {
+          "realm-management" : [ "manage-users", "query-users", "view-users" ]
+        }
+      },
+      "clientRole" : false,
+      "containerId" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
+      "attributes" : { }
+    }, {
+      "id" : "be50dc13-1a16-4dbf-86d6-804bc0b87f1d",
+      "name" : "teacher",
+      "description" : "",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "2f64f9e5-0ce8-4b6a-bf1e-0fcd7f41d16a",
@@ -214,7 +245,7 @@
         "composite" : true,
         "composites" : {
           "client" : {
-            "realm-management" : [ "manage-events", "manage-users", "view-realm", "impersonation", "view-authorization", "view-users", "manage-identity-providers", "query-clients", "view-events", "create-client", "manage-clients", "manage-authorization", "query-groups", "view-clients", "query-users", "manage-realm", "view-identity-providers", "query-realms" ]
+            "realm-management" : [ "manage-events", "manage-users", "view-realm", "impersonation", "view-authorization", "manage-identity-providers", "view-users", "query-clients", "view-events", "create-client", "manage-clients", "manage-authorization", "query-groups", "view-clients", "query-users", "manage-realm", "view-identity-providers", "query-realms" ]
           }
         },
         "clientRole" : true,
@@ -474,7 +505,9 @@
     "publicClient" : true,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -503,7 +536,7 @@
       "http://localhost/bff/login/oauth2/code/e-learning-project-bff",
       "https://localhost/bff/login/oauth2/code/e-learning-project-bff"
     ],
-    "webOrigins" : [ "/*" ],
+    "webOrigins" : [ "+" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -520,9 +553,9 @@
       "backchannel.logout.session.required" : "true",
       "backchannel.logout.url" : "http://LOCALHOST_NAME/bff/logout/connect/back-channel/e-learning-project-bff",
       "post.logout.redirect.uris" : "http://localhost/ui/*##http://127.0.0.1/ui/*##https://localhost/ui/*##https://127.0.0.1/ui/*##http://LOCALHOST_NAME/ui/*##https://LOCALHOST_NAME/ui/*",
-      "oauth2.device.authorization.grant.enabled" : "false",
       "display.on.consent.screen" : "false",
-      "backchannel.logout.revoke.offline.tokens" : "false"
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "true"
     },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : true,
@@ -549,7 +582,9 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -575,7 +610,9 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -960,6 +997,7 @@
       "config" : {
         "introspection.token.claim" : "true",
         "multivalued" : "true",
+        "userinfo.token.claim" : "true",
         "user.attribute" : "foo",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
@@ -1118,7 +1156,8 @@
       "config" : {
         "id.token.claim" : "true",
         "introspection.token.claim" : "true",
-        "access.token.claim" : "true"
+        "access.token.claim" : "true",
+        "userinfo.token.claim" : "true"
       }
     } ]
   } ],
@@ -1134,7 +1173,20 @@
     "xXSSProtection" : "1; mode=block",
     "strictTransportSecurity" : "max-age=31536000; includeSubDomains"
   },
-  "smtpServer" : { },
+  "smtpServer" : {
+    "replyToDisplayName" : "",
+    "starttls" : "true",
+    "auth" : "true",
+    "envelopeFrom" : "",
+    "ssl" : "false",
+    "password" : "jobp bowr xqxb nlcs",
+    "port" : "587",
+    "host" : "smtp.gmail.com",
+    "replyTo" : "",
+    "from" : "nguyennt11032004@gmail.com",
+    "fromDisplayName" : "e-learning-project - thnguyen101",
+    "user" : "nguyennt11032004@gmail.com"
+  },
   "eventsEnabled" : false,
   "eventsListeners" : [ "jboss-logging" ],
   "enabledEventTypes" : [ ],
@@ -1160,7 +1212,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-address-mapper", "saml-role-list-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper" ]
       }
     }, {
       "id" : "392afde0-1445-4b7b-81d1-0d6d86d62206",
@@ -1187,7 +1239,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-full-name-mapper", "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "e3913cb5-a024-4c1a-b082-27c44eb05895",
@@ -1790,13 +1842,19 @@
   "dockerAuthenticationFlow" : "docker auth",
   "attributes" : {
     "cibaBackchannelTokenDeliveryMode" : "poll",
-    "cibaExpiresIn" : "120",
     "cibaAuthRequestedUserHint" : "login_hint",
-    "oauth2DeviceCodeLifespan" : "600",
+    "clientOfflineSessionMaxLifespan" : "0",
     "oauth2DevicePollingInterval" : "5",
-    "parRequestUriLifespan" : "60",
+    "clientSessionIdleTimeout" : "0",
+    "clientOfflineSessionIdleTimeout" : "0",
     "cibaInterval" : "5",
-    "realmReusableOtpCode" : "false"
+    "realmReusableOtpCode" : "false",
+    "cibaExpiresIn" : "120",
+    "oauth2DeviceCodeLifespan" : "600",
+    "parRequestUriLifespan" : "60",
+    "clientSessionMaxLifespan" : "0",
+    "frontendUrl" : "",
+    "acr.loa.map" : "{}"
   },
   "keycloakVersion" : "23.0.5",
   "userManagedAccessAllowed" : false,
